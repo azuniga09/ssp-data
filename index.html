@@ -126,7 +126,7 @@ body{font-family:'DM Sans',sans-serif;background:#F5F0E8;color:#1A1A2E}
   </div>
   <div class="input-group">
     <label>Código de acceso</label>
-    <input type="text" id="login-code" placeholder="PROYECTO01 ... PROYECTO07 / FACILITADOR / DIRECCION" />
+    <input type="text" id="login-code" placeholder="Escribe tu código de acceso" />
   </div>
   <button class="btn-primary" onclick="doLogin()">Ingresar →</button>
 </div>
@@ -480,6 +480,7 @@ function selectRole(r){
   currentRole=r;
   document.querySelectorAll('.role-card').forEach(c=>c.classList.remove('selected'));
   document.querySelector(`[data-role="${r}"]`).classList.add('selected');
+  document.getElementById('login-code').placeholder='Escribe tu código de acceso';
 }
 
 function doLogin(){
