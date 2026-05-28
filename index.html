@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SSP Platform — Centro de Investigación en Innovación</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:#F5F0E8;color:#1A1A2E}
+:root{
+  --gold:#C9A84C;--dark:#1A1A2E;--mid:#2D2D44;--light:#F5F0E8;
+  --accent:#7B5EA7;--teal:#2E9E8A;--card-bg:rgba(255,255,255,0.96);
+}
+.app{min-height:100vh}
+.screen{display:none;padding:1.5rem}
+.screen.active{display:block}
+
+.login-wrap{max-width:440px;margin:0 auto;padding-top:3rem}
+.logo{text-align:center;margin-bottom:2rem}
+.logo h1{font-family:'Playfair Display',serif;font-size:28px;color:var(--dark);font-weight:600}
+.logo p{font-size:13px;color:#666;margin-top:6px}
+.role-cards{display:grid;gap:10px;margin-bottom:1.5rem}
+.role-card{background:var(--card-bg);border:1.5px solid #E0D8C8;border-radius:12px;padding:14px 16px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:12px}
+.role-card:hover{border-color:var(--gold);box-shadow:0 2px 12px rgba(201,168,76,0.15)}
+.role-card.selected{border-color:var(--gold);background:#FFFBF0}
+.role-icon{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.role-card h3{font-size:14px;font-weight:500;color:var(--dark)}
+.role-card p{font-size:12px;color:#888;margin-top:2px}
+.input-group{margin-bottom:12px}
+.input-group label{font-size:12px;color:#666;display:block;margin-bottom:4px;font-weight:500}
+.input-group input{width:100%;padding:10px 12px;border:1px solid #D8D0C0;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;background:white;color:var(--dark)}
+.input-group input:focus{outline:none;border-color:var(--gold)}
+.btn-primary{width:100%;padding:12px;background:var(--dark);color:white;border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:all 0.2s}
+.btn-primary:hover{background:var(--accent)}
+.btn-sm{padding:7px 14px;border-radius:6px;font-size:13px;font-weight:500;cursor:pointer;border:1.5px solid currentColor;background:transparent;font-family:'DM Sans',sans-serif;transition:all 0.2s}
+.btn-gold{color:var(--gold);border-color:var(--gold)}
+.btn-gold:hover{background:var(--gold);color:white}
+.btn-teal{color:var(--teal);border-color:var(--teal)}
+.btn-teal:hover{background:var(--teal);color:white}
+.btn-dark{color:var(--dark);border-color:var(--dark)}
+.btn-dark:hover{background:var(--dark);color:white}
+
+.topbar{background:var(--dark);color:white;padding:10px 1.5rem;display:flex;align-items:center;justify-content:space-between;margin:-1.5rem -1.5rem 1.5rem}
+.topbar h2{font-family:'Playfair Display',serif;font-size:16px;font-weight:400}
+.topbar-right{display:flex;align-items:center;gap:10px;font-size:12px;color:#AAA}
+.logout{font-size:12px;color:#AAA;cursor:pointer;text-decoration:underline}
+
+.phase-nav{display:flex;gap:6px;margin-bottom:1.5rem;flex-wrap:wrap}
+.phase-btn{padding:6px 14px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;border:1.5px solid #CCC;background:white;color:#666;font-family:'DM Sans',sans-serif;transition:all 0.2s}
+.phase-btn.active{background:var(--dark);color:white;border-color:var(--dark)}
+.phase-btn.done{border-color:var(--teal);color:var(--teal)}
+
+.card{background:var(--card-bg);border:1px solid #E0D8C8;border-radius:12px;padding:1.25rem;margin-bottom:1rem}
+.card h3{font-family:'Playfair Display',serif;font-size:17px;color:var(--dark);margin-bottom:4px}
+.card .sub{font-size:12px;color:#888;margin-bottom:1rem}
+
+.field-group{margin-bottom:12px}
+.field-group label{font-size:12px;font-weight:500;color:#555;display:block;margin-bottom:4px}
+.field-group input,.field-group textarea{width:100%;padding:9px 12px;border:1px solid #D8D0C0;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;background:white;color:var(--dark);resize:vertical}
+.field-group textarea{min-height:80px}
+.field-group input:focus,.field-group textarea:focus{outline:none;border-color:var(--accent)}
+
+.link-box{background:#F8F4EC;border:1px solid #E0D8C8;border-radius:8px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.link-box span{font-size:13px;color:var(--dark)}
+.link-box a{font-size:12px;color:var(--accent);text-decoration:none;font-weight:500}
+.link-box a:hover{text-decoration:underline}
+
+.cards-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:1rem}
+.ssp-card{aspect-ratio:2.5/3.5;border-radius:10px;overflow:hidden;cursor:pointer;position:relative;border:2px solid #E0D8C8;transition:all 0.25s;background:#EEE}
+.ssp-card:hover{border-color:var(--gold);transform:translateY(-3px);box-shadow:0 6px 20px rgba(0,0,0,0.12)}
+.card-inner{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform 0.5s}
+.ssp-card.flipped .card-inner{transform:rotateY(180deg)}
+.card-face{position:absolute;width:100%;height:100%;backface-visibility:hidden}
+.card-front-face{background:#EEE}
+.card-back-face{background:var(--dark);transform:rotateY(180deg);display:flex;align-items:center;justify-content:center;color:white;font-size:11px;text-align:center;padding:8px}
+.ssp-card img{width:100%;height:100%;object-fit:cover;display:block}
+.card-num{position:absolute;bottom:4px;right:6px;font-size:11px;font-weight:600;color:white;text-shadow:0 1px 3px rgba(0,0,0,0.8);z-index:2}
+
+.input-built{background:#F0F7F5;border:1px solid #C0DDD8;border-radius:8px;padding:12px;margin-top:10px}
+.input-built h4{font-size:12px;font-weight:500;color:var(--teal);margin-bottom:6px}
+.input-built pre{font-size:11px;color:#333;white-space:pre-wrap;line-height:1.6;font-family:'DM Sans',sans-serif;max-height:200px;overflow-y:auto}
+.copy-btn{margin-top:8px;padding:6px 12px;background:var(--teal);color:white;border:none;border-radius:6px;font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif}
+
+.progress-bar{background:#E8E0D0;border-radius:20px;height:6px;margin-bottom:1rem}
+.progress-fill{height:100%;border-radius:20px;background:var(--gold);transition:width 0.4s}
+
+.admin-grid{display:grid;gap:10px}
+.project-row{background:var(--card-bg);border:1px solid #E0D8C8;border-radius:10px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.project-row h4{font-size:14px;font-weight:500;color:var(--dark)}
+.project-row .meta{font-size:12px;color:#888;margin-top:2px}
+
+.alert{padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:10px}
+.alert-info{background:#F0EEFF;color:var(--accent);border:1px solid #D8D0F8}
+
+.section-title{font-family:'Playfair Display',serif;font-size:22px;color:var(--dark);margin-bottom:4px}
+.section-sub{font-size:13px;color:#888;margin-bottom:1.25rem}
+
+.card-label{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:8px;font-size:12px;color:#888;text-align:center}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+
+<!-- LOGIN -->
+<div class="screen active" id="screen-login">
+<div class="login-wrap">
+  <div class="logo">
+    <h1>🃏 SSP Platform</h1>
+    <p>Centro de Investigación en Innovación · Dirección de Innovación</p>
+  </div>
+  <div class="role-cards" id="role-cards">
+    <div class="role-card selected" onclick="selectRole('emprendedor')" data-role="emprendedor">
+      <div class="role-icon" style="background:#FFF8E8">💡</div>
+      <div><h3>Emprendedor</h3><p>Accede a tu proyecto y avanza por las fases</p></div>
+    </div>
+    <div class="role-card" onclick="selectRole('facilitador')" data-role="facilitador">
+      <div class="role-icon" style="background:#F0EEFF">🎓</div>
+      <div><h3>Facilitador</h3><p>Monitorea todos los proyectos en tiempo real</p></div>
+    </div>
+    <div class="role-card" onclick="selectRole('direccion')" data-role="direccion">
+      <div class="role-icon" style="background:#E8F5F0">🏛️</div>
+      <div><h3>Dirección de Innovación</h3><p>Vista de lectura — todos los repositorios</p></div>
+    </div>
+  </div>
+  <div class="input-group">
+    <label>Código de acceso</label>
+    <input type="text" id="login-code" placeholder="Escribe tu código de acceso" />
+  </div>
+  <button class="btn-primary" onclick="doLogin()">Ingresar →</button>
+</div>
+</div>
+
+<!-- EMPRENDEDOR -->
+<div class="screen" id="screen-emprendedor">
+<div class="topbar">
+  <h2>🃏 SSP Platform</h2>
+  <div class="topbar-right">
+    <span id="emp-name-top"></span>
+    <span class="logout" onclick="logout()">Salir</span>
+  </div>
+</div>
+
+<div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+
+<div class="phase-nav">
+  <button class="phase-btn active" onclick="goPhase(0)" id="pnav-0">1. Mi Proyecto</button>
+  <button class="phase-btn" onclick="goPhase(1)" id="pnav-1">2. Segmento Revelado</button>
+  <button class="phase-btn" onclick="goPhase(2)" id="pnav-2">3. Cartas e Historia</button>
+  <button class="phase-btn" onclick="goPhase(4)" id="pnav-4">4. Propuesta de Valor</button>
+  <button class="phase-btn" onclick="goPhase(5)" id="pnav-5">5. Factor WOW</button>
+  <button class="phase-btn" onclick="goPhase(6)" id="pnav-6">📋 Repositorio</button>
+  <button class="phase-btn" onclick="goPhase(7)" id="pnav-7" style="border-color:var(--gold);color:var(--gold)">🪪 Pasaporte</button>
+</div>
+
+<!-- FASE 0 -->
+<div id="phase-0">
+  <div class="section-title">Mi Proyecto</div>
+  <div class="section-sub">Completa cada campo — esta información alimenta automáticamente todos los chats del proceso.</div>
+
+  <div class="card" style="background:#F0EEFF;border-color:#D8D0F8;margin-bottom:1rem">
+    <h3 style="color:#7B5EA7">¿Cómo llenar este formulario?</h3>
+    <div class="sub" style="margin-bottom:8px">Responde con honestidad. No hay respuestas correctas. Cuanto más auténtico seas, mejores resultados obtendrás del proceso.</div>
+    <div style="font-size:12px;color:#555;line-height:1.8">
+      <b>Producto:</b> Describe qué ofreces en términos concretos, no en términos de beneficios todavía.<br>
+      <b>Segmento lógico:</b> Quién crees que es tu cliente hoy — aunque sea general.<br>
+      <b>Día a día:</b> Qué hace esa persona en su vida cotidiana en relación con el problema que tú resuelves.<br>
+      <b>Emoción:</b> Cómo se siente esa persona respecto al problema — frustración, confusión, miedo, cansancio.<br>
+      <b>Intentos fallidos:</b> Qué ha probado antes sin éxito.<br>
+      <b>Cambio deseado:</b> Qué quiere lograr si tu producto realmente funciona.
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Información del proyecto</h3>
+    <div class="sub">Campos obligatorios para continuar.</div>
+    <div class="field-group">
+      <label>Nombre del proyecto</label>
+      <input type="text" id="f-nombre" placeholder="Ej: Fragmento Raíz, Alma Circular, BioNest..." />
+    </div>
+    <div class="field-group">
+      <label>¿Qué es tu producto o servicio?</label>
+      <div style="font-size:11px;color:#999;margin-bottom:4px">Ejemplo 1: Sistema de autoconocimiento y segmentación emocional basado en cartas simbólicas SSP para ayudar a emprendedores y marcas personales a descubrir su mensaje e identidad desde una conexión emocional profunda.<br>Ejemplo 2: Plataforma que conecta empresas generadoras de residuos industriales con emprendedores que los transforman en productos de valor.</div>
+      <textarea id="f-producto" style="min-height:90px" placeholder="Describe qué ofreces de forma concreta..."></textarea>
+    </div>
+    <div class="field-group">
+      <label>Segmento lógico — ¿a quién crees que va dirigido hoy?</label>
+      <div style="font-size:11px;color:#999;margin-bottom:4px">Ejemplo 1: Emprendedores, coaches, terapeutas y creadores de contenido que quieren construir una marca personal más auténtica.<br>Ejemplo 2: Empresas manufactureras con residuos y diseñadores independientes que buscan materia prima alternativa.</div>
+      <textarea id="f-segmento-logico" style="min-height:70px" placeholder="Describe tu cliente actual de forma general..."></textarea>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Perfil emocional del cliente</h3>
+    <div class="sub">Esta información es la más importante — define el segmento revelado.</div>
+    <div class="field-group">
+      <label>¿Qué hace esta persona en su día a día en relación con el problema que tú resuelves?</label>
+      <div style="font-size:11px;color:#999;margin-bottom:4px">Ejemplo: Trabaja constantemente intentando "hacer que su proyecto funcione". Consume contenido de marketing y branding. Publica en redes, crea ideas, piensa demasiado y muchas veces duda antes de mostrarse. Siente que hay una versión más auténtica de sí misma que todavía no logra expresar.</div>
+      <textarea id="f-dia-a-dia" style="min-height:80px" placeholder="Describe su rutina y comportamiento..."></textarea>
+    </div>
+    <div class="field-group">
+      <label>¿Qué emoción vive frecuentemente en relación con el problema que tú resuelves?</label>
+      <div style="font-size:11px;color:#999;margin-bottom:4px">Ejemplo: Confusión emocional. Sensación de desconexión consigo misma. Frustración por sentir que tiene talento pero no logra traducirlo en claridad o resultados. Cansancio por intentar encajar en estrategias que no reflejan quién realmente es.</div>
+      <textarea id="f-emocion" style="min-height:80px" placeholder="Frustración, confusión, miedo, cansancio, soledad..."></textarea>
+    </div>
+    <div class="field-group">
+      <label>¿Qué ha intentado antes y no le ha funcionado?</label>
+      <div style="font-size:11px;color:#999;margin-bottom:4px">Ejemplo: Cursos genéricos de marketing. Plantillas de contenido. Estrategias copiadas de otros. Tests superficiales de personalidad. Métodos demasiado racionales que ignoran su parte emocional e intuitiva.</div>
+      <textarea id="f-intentos" style="min-height:80px" placeholder="Lista las soluciones que ya probó sin éxito..."></textarea>
+    </div>
+    <div class="field-group">
+      <label>¿Qué cambio desea lograr si tu producto realmente funciona?</label>
+      <div style="font-size:11px;color:#999;margin-bottom:4px">Ejemplo: Quiere sentirse vista. Entender por qué conecta con ciertas emociones y símbolos. Comunicar su valor sin sentirse falsa. Atraer personas que realmente resuenen con su esencia y construir un proyecto alineado con quien es de verdad.</div>
+      <textarea id="f-cambio" style="min-height:80px" placeholder="Describe la transformación que desea vivir..."></textarea>
+    </div>
+    <button class="btn-sm btn-dark" onclick="savePhase0()">Guardar y continuar →</button>
+  </div>
+</div>
+
+<!-- FASE 1 -->
+<div id="phase-1" style="display:none">
+  <div class="section-title">Segmento Revelado</div>
+  <div class="section-sub">Revisa tus respuestas, cópialas al chat y pega el resultado aquí.</div>
+
+  <div class="card">
+    <h3>Paso 1 — Tus respuestas del módulo anterior</h3>
+    <div class="sub">Este es el input que necesita el Chat GPT de Segmento Revelado. Cópialo y pégalo directamente.</div>
+    <div id="resumen-fase0" style="margin-bottom:12px"></div>
+    <button class="copy-btn" onclick="copyResumenFase0()" id="btn-copy-resumen">Copiar mis respuestas para el chat</button>
+  </div>
+
+  <div class="card">
+    <h3>Paso 2 — Abre el Chat GPT y pega tus respuestas</h3>
+    <div class="link-box">
+      <span>🤖 Chat GPT — Segmento Revelado</span>
+      <a href="https://chatgpt.com/g/g-687ef225d79c819198cad56ff4620d78-segmento-revelado" target="_blank">Abrir chat →</a>
+    </div>
+    <div class="alert alert-info">Abre el chat, pega todo lo que copiaste y espera el resultado completo.</div>
+  </div>
+
+  <div class="card">
+    <h3>Paso 3 — Pega aquí el resultado del Chat GPT</h3>
+    <div class="field-group"><label>Output completo del Chat 1</label><textarea id="f-segmento-revelado" style="min-height:160px" placeholder="🃏 Carta SSP elegida: ...&#10;&#10;Interpretación simbólica: ...&#10;&#10;Segmento revelado: ..."></textarea></div>
+    <button class="btn-sm btn-dark" onclick="savePhase1()">Guardar y continuar →</button>
+  </div>
+</div>
+
+<!-- FASE 2 -->
+<div id="phase-2" style="display:none">
+  <div class="section-title">Las Cartas SSP y tu Historia</div>
+  <div class="section-sub">Tus cartas fueron asignadas aleatoriamente. Haz clic en cada una para ver su reverso, luego escribe tu historia inspirándote en ellas.</div>
+  <div style="margin-bottom:1rem">
+    <button class="btn-sm btn-gold" onclick="reshuffleHistoryCards()">🔀 No me gustan mis cartas — cambiarlas</button>
+  </div>
+
+  <div class="card">
+    <h3>🌑 Carta 1 — El Ser y su Mundo</h3>
+    <div class="sub" id="carta1-ref">Carta asignada aleatoriamente</div>
+    <div id="card-slot-0" style="display:flex;gap:16px;align-items:flex-start;margin-bottom:12px">
+      <div id="card-thumb-0" style="flex-shrink:0;width:90px;height:126px;border-radius:8px;overflow:hidden;border:2px solid #E0D8C8;cursor:pointer;background:#EEE;position:relative" onclick="flipThumb(0)">
+        <div id="card-thumb-inner-0" style="width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform 0.5s">
+          <div style="position:absolute;width:100%;height:100%;backface-visibility:hidden" id="card-thumb-front-0"></div>
+          <div style="position:absolute;width:100%;height:100%;backface-visibility:hidden;transform:rotateY(180deg);background:#1A1A2E;display:flex;align-items:center;justify-content:center;color:white;font-size:22px;flex-direction:column;gap:4px" id="card-thumb-back-0"><div>🌑</div><div style="font-size:9px;opacity:0.7">El Ser</div></div>
+        </div>
+        <div style="position:absolute;bottom:3px;right:5px;font-size:10px;font-weight:600;color:white;text-shadow:0 1px 3px rgba(0,0,0,0.8)" id="card-num-0"></div>
+      </div>
+      <div style="flex:1">
+        <div class="field-group" style="margin-bottom:8px"><label>En un mundo fantástico, mi personaje es...</label><textarea id="h-ser" style="min-height:60px" placeholder="En un reino donde todo se construía de aire vivía Sael..."></textarea></div>
+        <div class="field-group" style="margin-bottom:0"><label>Lo que más le faltaba sin saberlo era...</label><textarea id="h-mundo" style="min-height:60px" placeholder="...un ser que recordaba cómo se sentía tocar algo permanente..."></textarea></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>⚡ Carta 2 — La Tensión</h3>
+    <div class="sub" id="carta2-ref">Carta asignada aleatoriamente</div>
+    <div style="display:flex;gap:16px;align-items:flex-start;margin-bottom:12px">
+      <div id="card-thumb-1" style="flex-shrink:0;width:90px;height:126px;border-radius:8px;overflow:hidden;border:2px solid #E0D8C8;cursor:pointer;background:#EEE;position:relative" onclick="flipThumb(1)">
+        <div id="card-thumb-inner-1" style="width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform 0.5s">
+          <div style="position:absolute;width:100%;height:100%;backface-visibility:hidden" id="card-thumb-front-1"></div>
+          <div style="position:absolute;width:100%;height:100%;backface-visibility:hidden;transform:rotateY(180deg);background:#1A1A2E;display:flex;align-items:center;justify-content:center;color:white;font-size:22px;flex-direction:column;gap:4px"><div>⚡</div><div style="font-size:9px;opacity:0.7">La Tensión</div></div>
+        </div>
+        <div style="position:absolute;bottom:3px;right:5px;font-size:10px;font-weight:600;color:white;text-shadow:0 1px 3px rgba(0,0,0,0.8)" id="card-num-1"></div>
+      </div>
+      <div style="flex:1">
+        <div class="field-group" style="margin-bottom:8px"><label>Un día apareció una fuerza oscura llamada...</label><textarea id="h-tension" style="min-height:60px" placeholder="La Niebla del Olvido comenzó a borrar todo..."></textarea></div>
+        <div class="field-group" style="margin-bottom:0"><label>Lo había intentado resolver con... pero falló porque...</label><textarea id="h-intento" style="min-height:60px" placeholder="Intentó preservarlo con cristal, con metal — pero todo se disolvía igual..."></textarea></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>✨ Carta 3 — La Transformación</h3>
+    <div class="sub" id="carta3-ref">Carta asignada aleatoriamente</div>
+    <div style="display:flex;gap:16px;align-items:flex-start;margin-bottom:12px">
+      <div id="card-thumb-2" style="flex-shrink:0;width:90px;height:126px;border-radius:8px;overflow:hidden;border:2px solid #E0D8C8;cursor:pointer;background:#EEE;position:relative" onclick="flipThumb(2)">
+        <div id="card-thumb-inner-2" style="width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform 0.5s">
+          <div style="position:absolute;width:100%;height:100%;backface-visibility:hidden" id="card-thumb-front-2"></div>
+          <div style="position:absolute;width:100%;height:100%;backface-visibility:hidden;transform:rotateY(180deg);background:#1A1A2E;display:flex;align-items:center;justify-content:center;color:white;font-size:22px;flex-direction:column;gap:4px"><div>✨</div><div style="font-size:9px;opacity:0.7">La Transformación</div></div>
+        </div>
+        <div style="position:absolute;bottom:3px;right:5px;font-size:10px;font-weight:600;color:white;text-shadow:0 1px 3px rgba(0,0,0,0.8)" id="card-num-2"></div>
+      </div>
+      <div style="flex:1">
+        <div class="field-group" style="margin-bottom:8px"><label>Hasta que encontró el artefacto mágico...</label><textarea id="h-artefacto" style="min-height:60px" placeholder="El Fragmento Raíz — un objeto antiguo tallado por manos que ya no existían..."></textarea></div>
+        <div class="field-group" style="margin-bottom:0"><label>Con él, el mundo nunca volvió a ser igual porque...</label><textarea id="h-transformacion" style="min-height:60px" placeholder="Lo que tocaba dejaba huella. Lo que construía permanecía..."></textarea></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="background:#F8F4EC">
+    <h3>📋 Input listo para Chat 2</h3>
+    <div class="sub">La plataforma armó este input automáticamente. Cópialo y pégalo en el chat.</div>
+    <div class="link-box">
+      <span>🤖 Chat GPT — Historia + Propuesta de Valor</span>
+      <a href="https://chatgpt.com/g/g-6a1777fc0d7c8191a9a33ca505677549-story-telling-direccion-innovacion" target="_blank">Abrir chat →</a>
+    </div>
+    <div class="input-built">
+      <h4>INPUT COMPLETO — Copia todo:</h4>
+      <pre id="input-chat2"></pre>
+      <button class="copy-btn" onclick="copyInput('input-chat2')">Copiar input</button>
+    </div>
+    <button class="btn-sm btn-dark" onclick="savePhase2()" style="margin-top:12px">Guardé mi historia — continuar →</button>
+  </div>
+</div>
+
+<!-- FASE 6 — REPOSITORIO PROPIO -->
+<div id="phase-6" style="display:none">
+  <div class="section-title">📋 Repositorio</div>
+  <div class="section-sub">Todo lo que has construido en este proceso.</div>
+  <div id="emp-repo-content"></div>
+</div>
+
+<!-- FASE 7 — PASAPORTE -->
+<div id="phase-7" style="display:none">
+  <div class="section-title">🪪 Pasaporte de Innovación</div>
+  <div class="section-sub">Pega el output del Chat GPT y guárdalo o descárgalo como Word.</div>
+  <div class="card" style="background:#1A1A2E;border-color:#1A1A2E;margin-bottom:1.25rem">
+    <h3 style="color:#C9A84C;margin-bottom:6px">Documento Final</h3>
+    <p style="font-size:13px;color:#AAA;margin-bottom:12px">Pega aquí el Pasaporte de Innovación generado por el Chat GPT.</p>
+    <div class="field-group">
+      <textarea id="f-pasaporte-final" style="min-height:300px;background:#2D2D44;border-color:#444;color:#EEE;font-size:13px" placeholder="Pega aquí el Pasaporte de Innovación generado por el Chat GPT..."></textarea>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <button onclick="guardarPasaporte()" style="background:var(--gold);color:white;border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;padding:10px 16px;cursor:pointer">💾 Guardar</button>
+      <button onclick="descargarPasaporteWord()" style="background:var(--teal);color:white;border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;padding:10px 16px;cursor:pointer">📄 Descargar como Word (.docx)</button>
+    </div>
+    <div id="pasaporte-status" style="margin-top:8px;font-size:12px;color:#AAA;display:none"></div>
+  </div>
+  <div id="pasaporte-preview"></div>
+</div>
+
+</div>
+
+<!-- FASE 4 -->
+<div id="phase-4" style="display:none">
+  <div class="section-title">Propuesta de Valor</div>
+  <div class="section-sub">Copia el input que armamos con tu historia, pégalo en el Chat GPT y trae el resultado aquí.</div>
+
+  <div class="card" style="background:#F8F4EC">
+    <h3>Paso 1 — Input listo para el Chat 2</h3>
+    <div class="sub">La plataforma combinó tu segmento revelado, tu producto y tu historia. Cópialo todo.</div>
+    <div class="input-built">
+      <h4>INPUT COMPLETO — Copia todo:</h4>
+      <pre id="input-chat2-fase4"></pre>
+      <button class="copy-btn" onclick="copyInput('input-chat2-fase4')">Copiar input</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Paso 2 — Abre el Chat GPT y pega el input</h3>
+    <div class="link-box">
+      <span>🤖 Chat GPT — Historia + Propuesta de Valor</span>
+      <a href="https://chatgpt.com/g/g-6a1777fc0d7c8191a9a33ca505677549-story-telling-direccion-innovacion" target="_blank">Abrir chat →</a>
+    </div>
+    <div class="alert alert-info">Pega el input, espera el resultado completo y cópialo abajo.</div>
+  </div>
+
+  <div class="card">
+    <h3>Paso 3 — Pega aquí el resultado del Chat GPT</h3>
+    <div class="field-group"><label>Output completo del Chat 2 — Propuesta de Valor</label><textarea id="f-propuesta" style="min-height:180px" placeholder="Para [segmento revelado] que [dolor]...&#10;&#10;Atributos clave:&#10;...&#10;&#10;Acciones concretas:&#10;..."></textarea></div>
+    <button class="btn-sm btn-dark" onclick="savePhase4()">Guardar y continuar →</button>
+  </div>
+</div>
+
+<!-- FASE 5 -->
+<div id="phase-5" style="display:none">
+  <div class="section-title">Factor WOW</div>
+  <div class="section-sub">Tus 3 cartas de exageración fueron asignadas aleatoriamente. Úsalas para llevar tu propuesta de valor al extremo.</div>
+
+  <div class="card">
+    <h3>Paso 1 — Tus cartas de exageración</h3>
+    <div class="sub">Cada carta es un detonador para imaginar una versión imposible de tu propuesta de valor. Haz clic para voltearlas.</div>
+    <div style="margin-bottom:10px">
+      <button class="btn-sm btn-gold" onclick="reshuffleWowCards()">🔀 No me gustan mis cartas — cambiarlas</button>
+    </div>
+    <div style="display:flex;gap:12px;margin-bottom:4px" id="wow-cards-grid"></div>
+    <div style="display:grid;grid-template-columns:repeat(3,90px);gap:12px;margin-top:6px;font-size:11px;color:#888;text-align:center">
+      <div>💥 Atributo 1</div><div>🚀 Atributo 2</div><div>🌌 Atributo 3</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Paso 2 — Exagera tu propuesta de valor</h3>
+    <div class="sub">Inspírate en las cartas. Lleva cada atributo al extremo — cuanto más imposible suene, mejor.</div>
+    <div class="field-group"><label>¿Qué pasaría si tu propuesta de valor fuera tan poderosa que...?</label><textarea id="f-exageracion" style="min-height:100px" placeholder="¿Qué pasaría si mi producto pudiera interceptar el momento exacto en que el valor está a punto de desaparecer para siempre y entregarlo al creador correcto antes de que el sistema lo entierre?" oninput="buildWowInput()"></textarea></div>
+  </div>
+
+  <div class="card" style="background:#F8F4EC">
+    <h3>Paso 3 — Input listo para el Chat WOW</h3>
+    <div class="sub">La plataforma armó el input con tu propuesta de valor y tu exageración. Cópialo y pégalo en el mismo Chat 2.</div>
+    <div class="link-box">
+      <span>🤖 Regresa al mismo Chat 2 — segunda interacción</span>
+      <a href="https://chatgpt.com/g/g-6a1777fc0d7c8191a9a33ca505677549-story-telling-direccion-innovacion" target="_blank">Abrir chat →</a>
+    </div>
+    <div class="input-built">
+      <h4>INPUT — Segunda interacción:</h4>
+      <pre id="input-wow"></pre>
+      <button class="copy-btn" onclick="copyInput('input-wow')">Copiar input</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Paso 4 — Pega aquí el Factor WOW</h3>
+    <div class="field-group"><label>Output completo del chat — Factor WOW</label><textarea id="f-wow" style="min-height:160px" placeholder="🌟 FACTOR WOW:&#10;..."></textarea></div>
+    <button class="btn-sm btn-gold" onclick="savePhase5()">¡Completar mi repositorio! 🎉</button>
+  </div>
+</div>
+</div>
+
+<!-- ADMIN -->
+<div class="screen" id="screen-admin">
+<div class="topbar">
+  <h2>🃏 SSP Platform</h2>
+  <div class="topbar-right">
+    <span id="admin-role-label"></span>
+    <span class="logout" onclick="logout()">Salir</span>
+  </div>
+</div>
+<div class="section-title">Panel de proyectos</div>
+<div class="section-sub" id="admin-sub"></div>
+<div class="admin-grid" id="admin-grid"></div>
+</div>
+
+<!-- REPOSITORIO -->
+<div class="screen" id="screen-repo">
+<div class="topbar">
+  <h2>🃏 SSP Platform</h2>
+  <div class="topbar-right">
+    <span class="logout" onclick="backToAdmin()">← Volver al panel</span>
+  </div>
+</div>
+<div id="repo-content"></div>
+</div>
+
+<script>
+const FRONT_IDS={1:'1QqWNuU4ghhG6hCQn9r879AQf3JaZpLKP',2:'1BRL-EuVCFbKLN-Sz3yjMQhYL1llAH3yx',3:'1Ejqo_LI3Anq227d6saN7Z9WTj8aooh4E',4:'1gEW2yeDjOFr2JCEVM-fNwzareYL6t9_g',5:'1xAYJP5191Ht9bYYO4fYeo_NEUPZT_5EC',6:'1FR0Eh6yL9fz06rtB-UqB8DhdsJgtbfK8',7:'1hrzAutJO-Nd-jqqU2H_T4cjO0-botPi5',8:'12QFVyfifi2RQJ0Oj8eRL7nlAGKVkkUA4',9:'1hWVrDFw0E1Vkngls4_H4gfwoCH1h8UUo',10:'1jJ1gRWFfVug86Kg1hsDEQCVv0Ci1b6Q',11:'1I0l1c97WqnxnjEr1Bu__y2w075qSH0-H',12:'1yp3tjFC-fdtXksoTinWKA7D00SvdGbhz',13:'15s1-dUyNt19Vb90oSQLhK7JhGLGM7o1f',14:'1QZtaPnO545PW5J7UrKOUPjQ3hGqqp7s3',15:'1s83AEqpWfo-XIvrEcuGMlxfiFO-Nv833',16:'1wgPbKTpa6oVTXlZvW_mDU5yXy8avb1ui',17:'1m9Y1DCfWvQ0gMWL8Ue57AP3Fbkc38KTY',18:'1emLElIDrLUEL_tIdT1WgcMlQXqdsZMo5',19:'13KGWC1Ahppz5Di7xJwIzuH-hSkdnDdR2',20:'1rdsZ9rVaXjNgVlCHkPM5vXshNAwz2QUI',21:'1rtjSrla7dNCRIkMIxsk5c2EcVBnt_5SK',22:'1HwZjv6rdOugrmYtqZ_2sinWrhVUojrbu',23:'1KG7J1zKXjgHlBpY4_qUFWfqCUOSw4KpM',24:'1RiNEpzTFWo4N88tQcUZj_OLUBKjvwj2c',25:'1B7Bn_5u-8B-h2N-inqCLvHDcQHXGamIv',26:'1iOu_3aovw0w1ggv4dVFlxoVrUbQwfZ3d',27:'1vAPZuP5lTrTDT07tRtu9fxOZfeyNVcMv',28:'1pWRkHJ_r_AEVMUVQKMpdQCFMkIhxynX-',29:'1st8N90-DIaH5XmywFa_fZN4P7BDp5dhX',30:'1-DYtukFLYi8HzBObnn3U5Qk96lXp_uvZ',31:'17ZzN3JY0241-mJIJlWn10j5smnL58Pa_',32:'1mjTLV20HwTGaepSNF9rxOqtX0l3XtIQl',33:'1nwbxl11B2ddYReMElij4MeudwD3aHTIH',34:'1Ygfi-SOJwcrA2X_Rob6k31k8E1o-TEqN',35:'1x3uqdnM0IiDOJ1gLPNPhwYfSbg3Zy-zE',36:'16g2YlGEidNuUqxQNbBsPZ8r0OWRYJ7xY',37:'15WcKn4hptBJjbSPkJSWnHI7jBey_VKI5',38:'1E_QxozsZ_wMy4Wg4Df4QPvSToG6HtlYD',39:'1mhu2aQmL3vN99Vzht_t8xK6q_1GML6II',40:'1MxbV2Oa01lVDdbmA9uC6vGCCm1giVx4n',41:'1TwAHH2st1AW40RamEOsvXDivtVxhPZfC',42:'1aBW-oVx5qkptiVsY6zcgQ8oyrr362ZOZ',43:'1WcV20xKLCvzUcDkvWfqGqRIBXdCNfspO',44:'1KU5w9PdbnoMw5DSPoPnWFJpLfSKyKRaC',45:'1XalxyiLf7D4ii52md3O0Q6KMXCzep76-',46:'1NlbLzCVJ3ALkpdfmA4BpbEARKHLrKczP',47:'1JqS3S0WXzsq1O40P-xg2FiiikdJ-U5Eg',48:'1uozLSma0HaQH4c_tlUZYqdqNKWr_rijX',49:'11D84g630Nh_Sh622x1Q2VaiTYld9sW8B',50:'1YTKGG7BI2nH9HDaWQ-jpyCL4UH6wjcwN',51:'1KQvmaEQKFP6aI0lsJpKlUmPS_exdp7i6',52:'1j5Y4UiO0hNSsHz2UR4s9JLZpkYNmoXWC',53:'1YaOVftO7BtDxcdP5M6zvR5z25ZPjdZOI',54:'1nUOxmUAk2ngplsoqv1wIzVauTDg49urO',55:'1_s8MHk3vjAX61xodWq0lAoDrHVEr_-QT',56:'1T4TYrkZTpsORA0xWiSHFZckY1mCO-uiW',57:'1coHSO7GR6ue8LPqqZmVryoqha5hlpXLU',58:'1ZEtgEY31pCNYT8FRWhHyYFtY_b3YoP7w',59:'1m3CCXssLrN43ZbS6Vms15DLcVtnJAx--',60:'1vdt9aVUWtG16h-vJdAj8KLs07RATHjRP',61:'1c9L9inMLSFmtAiM9YSKYDxmpV0s0_uRJ',62:'1r0i0B5ZtWku6GIFYxwRSS9aK7jNed1ti',63:'1em-Q1a35VWeSmcXHVuVa0itiK9WnWVLR',64:'1ucUhsD8krgUspZnpmzks4Lw0QOJYMSg6',65:'15kMAvfb6Q1apDjvhnI0XCO7fHuYWxFE3',66:'1Mmt-7MRAw7eKV5AtUPCvI9OxHZfvBy7f',67:'1jzBJyF2LTQmB4bHroOaC2X5C500NahAG'};
+const BACK_IDS={1:'1LCElBrQQ6NPUqpdR2o7PxQ3sIBA0TJD1',2:'1oIqKBP9Gem6_fQXKfflal_L_HFDLnVQX',3:'1uumAqbc_k1vZlWYygluAs5XuBzNb4KRo',4:'1PxUZn0xtBegDy5Q53hYLZqJbh7DbZkpt',5:'1tVGI7gnU008d6UNAOXtylz_i52qUSCHz',6:'1PoR_Ai5V1b3YeV3e2GJZJUk8IK3kpCRE',7:'1OXRSVoxcs0RhZuokDXkBzqR8cP6W7_3K',8:'17jfT_8ol5XbR97olO52HcQntKJz-1Ysr',9:'11CEHwaexmk814eKs3vZQZpWRkaPMGpEE',10:'1oaAIhT2fFs03UMbYrPXO6nS8gG4wlAP_',11:'1ng_XOkjUwNjAhJNhnFtXhXznVB296O1e',12:'1c_XgmizRttG5JtxHKCIHecJx3M2u2B7C',13:'1ebs8JIzLjPEe8zUetAtlVhNIa9uXwAaJ',14:'1_rr5koDcjcknRgM1jX4CXm98pUrGmP1I',15:'1ldWNHwuXZNV0Ov8ypomiJFIwBtQ7-TQS',16:'1Wwz_ZCKCPVmzEMMFpKkUxvI3GWsjUaPt',17:'1E8J-TZBpmWI7PY4ncHwLoprbbiYcIbs1',18:'1dVZTmFBcP1UsZdoHjmFYjEORTVYfd845',19:'1gP8848WQ_DYchwRLPqa60-RwSxxeGLAy',20:'1ZK8cfgq2iYpLqja-I03AOpnBJR5aybUB',21:'1RpwgmeeyjWC2PvHi0m6cc4tkS4Bqu1KS',22:'1BvErIhi7Muf5V5XC10bOU-vRYr_YTYiQ',23:'1u3jVmaxdRdqRFYcB5lZPInsQ_pKXKLuY',24:'1JQBck0lqKdxfAw4GvLO4Ef7wTKHAgdVv',25:'1ZjqrwMjOA_K5jrkMU6TMSoiQKrz4IGZT',26:'1VYy4TJb7xrDGZsLBE3sNcGvMILVF7Ep-',27:'18wI-H313WEAzOIhAEOW-H313WEAzOIhAE',28:'1tedBO6gnsJWTFL3yHzzoX9UEiRHUXW4Y',29:'1MWbrypg4vUtpc8X3ywKwSeoYMP-c7X2x',30:'1hZzqQ2vipLpFOU8myaxPWb0GLupFGiv-',31:'1lmI_CisjGdcUi5WFoQ8Yna9lTpeahnkX',32:'1tFfcpnIq0_eJsCz5_LGLeGgL5Zqr1xaH',33:'1BMzqlANbmN4kXXI0KgH4ApJ8ehBh-yT6',34:'16qTvI0yhUL26mLLN0eEkMvB6t9NAmkMb',35:'1wdieB_fAfXMG1h6663dC0enasQEDvkj2',36:'1ynL9pGX2zKX53_yA8EL_hWUBbXIMheRW',37:'1AyOoUX6PejO5EjLgaGpfnKsANNsM69gw',38:'1yE9aUrgkc5UWiOSZADNehE9aUrgkc5UW',39:'163C_139IpJU7u_x25oVHeW8O0dTq35n9',40:'1RuGpzfVs81vsarJ44NvBkJyh9FKBBinJ',41:'1PlDFZlLrXJKGwWdyS84JZdVFd5HSiQfR',42:'1vE7Enx7TZWbSw00hkAvOl2nRd2N-O6Nf',43:'1xxFUw84uVlvjkQAiMVhHxWT9Eu5EDs4r',44:'1yV6t0t4zAfkyxZQHl8M_ckJ7hhcJI4Gy',45:'1_GHZ0l0Tz633Z_cZ2tsgwY51dyho41LV',46:'1u6f9VA0KUKvVc_sK9QELiou6f9VA0KUK',47:'1zL0N_wH-9ps6Dr-UaP2VReBW0kH9Eulv',48:'1TVoc-eZQDDUG8wU0Tdm4tGyo6Oig09qS',49:'1k4ZayFjW5BPteTR0Ef1k4ZayFjW5BPte',50:'1vVPkx4h3bcXYnfJUgUPOd2H6-_pvlvtd',51:'1dm5YR5nsAOzL66L0W8rzhlsvVdHx01Hl',52:'1xK-_e0nKs7Ijp4biE_gZWv2mPE7jwHBh',53:'147vyxzohviEOEgvcLJczRei8yN4ZlKof',54:'1zZ808TosEPLctGSG6s554ipqkBVkmMmB',55:'1agSJqe2T5DwdAd56yyxFr7xNa6l9D_5B',56:'1IXXvSfkvu-K0xbZA7XcG0WyBNAzc_20A',57:'13BQQbRrxd4duxlxoGur8pJ16H3k1hjAf',58:'16KireALYC6g5Ujh4RxvctetwG2brIesb',59:'1P7FY-kkOuqBRMSS-IvyZaMGkktBKKhzf',60:'1J046N2cf8YKvzsXwzJYh6BAoL12b3AEo',61:'1Vp1_UlHXBDPV3QO5J5YRE1SlKSc71VDv',62:'1HJTvVf2zCY7Lh3TZzQwnEGjWv6em7b2L',63:'17fNlwSqAFcNtWvJZyfD7JzYtQeWKKkT8',64:'1bUhvW42QVJe7F2MWRDeig_Fc0H3tNCRT',65:'1G-XQ2awJSvSFt1cJnf1ImrvRh6R1qza3',66:'1MlZOplHt3ZOcvBlF82Z0Vs3drGWM-hg5',67:'1q7DxKVfc6vWnsworWOpDqpSUh0y-KIw1'};
+
+const CODES={
+  'FACILITADOR':{role:'facilitador',name:'Facilitador'},
+  'DIRECCION':{role:'direccion',name:'Lic. Jessica Ramírez'},
+  'PROYECTO01':{role:'emprendedor',name:'Proyecto 01'},
+  'PROYECTO02':{role:'emprendedor',name:'Proyecto 02'},
+  'PROYECTO03':{role:'emprendedor',name:'Proyecto 03'},
+  'PROYECTO04':{role:'emprendedor',name:'Proyecto 04'},
+  'PROYECTO05':{role:'emprendedor',name:'Proyecto 05'},
+  'PROYECTO06':{role:'emprendedor',name:'Proyecto 06'},
+  'PROYECTO07':{role:'emprendedor',name:'Proyecto 07'},
+  'PROYECTO08':{role:'emprendedor',name:'Proyecto 08'},
+  'PROYECTO09':{role:'emprendedor',name:'Proyecto 09'},
+  'PROYECTO10':{role:'emprendedor',name:'Proyecto 10'},
+};
+
+let currentRole='emprendedor';
+let currentUser=null;
+let assignedCards=[];
+
+function selectRole(r){
+  currentRole=r;
+  document.querySelectorAll('.role-card').forEach(c=>c.classList.remove('selected'));
+  document.querySelector(`[data-role="${r}"]`).classList.add('selected');
+  document.getElementById('login-code').placeholder='Escribe tu código de acceso';
+}
+
+function doLogin(){
+  const code=document.getElementById('login-code').value.trim().toUpperCase();
+  if(!CODES[code]){alert('Código no válido.');return;}
+  currentUser={code,...CODES[code]};
+  if(currentUser.role==='emprendedor') loadEmprendedor();
+  else loadAdmin(currentUser.role);
+}
+
+async function loadEmprendedor(){
+  showScreen('screen-emprendedor');
+  document.getElementById('emp-name-top').textContent=currentUser.name;
+  // Mostrar loading
+  document.getElementById('progress-fill').style.width='0%';
+  // Cargar desde GitHub
+  await loadFromGitHub(currentUser.code);
+  loadSavedData();
+  goPhase(0);
+}
+
+// GitHub config
+const GH_USER='azuniga09';
+const GH_REPO='ssp-data';
+const GH_TOKEN='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';
+const GH_API=`https://api.github.com/repos/${GH_USER}/${GH_REPO}/contents/`;
+
+// Cache local para no hacer fetch en cada operación
+let _localCache={};
+
+function getSaved(){
+  return _localCache[currentUser.code]||{};
+}
+
+function save(data){
+  const merged={...getSaved(),...data};
+  _localCache[currentUser.code]=merged;
+  // Guardar en localStorage como respaldo inmediato
+  try{localStorage.setItem('ssp_'+currentUser.code,JSON.stringify(merged));}catch(e){}
+  // Guardar en GitHub de forma asíncrona
+  saveToGitHub(currentUser.code, merged);
+}
+
+async function saveToGitHub(code, data){
+  try{
+    const path=`proyectos/${code}.json`;
+    const content=btoa(unescape(encodeURIComponent(JSON.stringify(data,null,2))));
+    // Obtener SHA si existe
+    let sha=undefined;
+    try{
+      const res=await fetch(GH_API+path,{headers:{
+        'Authorization':'token '+GH_TOKEN,
+        'Accept':'application/vnd.github.v3+json'
+      }});
+      if(res.ok){const d=await res.json();sha=d.sha;}
+    }catch(e){}
+    // Guardar
+    await fetch(GH_API+path,{
+      method:'PUT',
+      headers:{
+        'Authorization':'token '+GH_TOKEN,
+        'Accept':'application/vnd.github.v3+json',
+        'Content-Type':'application/json'
+      },
+      body:JSON.stringify({
+        message:`Update ${code}`,
+        content,
+        ...(sha?{sha}:{})
+      })
+    });
+  }catch(e){console.error('GitHub save error:',e);}
+}
+
+async function loadFromGitHub(code){
+  // Primero intentar localStorage como caché rápido
+  try{
+    const local=localStorage.getItem('ssp_'+code);
+    if(local) _localCache[code]=JSON.parse(local);
+  }catch(e){}
+  // Luego sincronizar con GitHub
+  try{
+    const path=`proyectos/${code}.json`;
+    const res=await fetch(GH_API+path,{headers:{
+      'Authorization':'token '+GH_TOKEN,
+      'Accept':'application/vnd.github.v3+json'
+    }});
+    if(res.ok){
+      const d=await res.json();
+      const data=JSON.parse(decodeURIComponent(escape(atob(d.content))));
+      _localCache[code]=data;
+      localStorage.setItem('ssp_'+code,JSON.stringify(data));
+      return data;
+    }
+  }catch(e){console.error('GitHub load error:',e);}
+  return _localCache[code]||{};
+}
+
+async function loadAllProjects(){
+  try{
+    const res=await fetch(GH_API+'proyectos/',{headers:{
+      'Authorization':'token '+GH_TOKEN,
+      'Accept':'application/vnd.github.v3+json'
+    }});
+    if(res.ok){
+      const files=await res.json();
+      const results={};
+      await Promise.all(files.map(async f=>{
+        const code=f.name.replace('.json','');
+        const r=await fetch(f.download_url,{headers:{'Authorization':'token '+GH_TOKEN}});
+        if(r.ok) results[code]=await r.json();
+      }));
+      return results;
+    }
+  }catch(e){console.error('GitHub loadAll error:',e);}
+  return {};
+}
+
+function loadSavedData(){
+  const s=getSaved();
+  if(s.nombre) document.getElementById('f-nombre').value=s.nombre;
+  if(s.producto) document.getElementById('f-producto').value=s.producto;
+  if(s.segmentoLogico) document.getElementById('f-segmento-logico').value=s.segmentoLogico;
+  if(s.diaADia) document.getElementById('f-dia-a-dia').value=s.diaADia;
+  if(s.emocion) document.getElementById('f-emocion').value=s.emocion;
+  if(s.intentos) document.getElementById('f-intentos').value=s.intentos;
+  if(s.cambio) document.getElementById('f-cambio').value=s.cambio;
+  if(s.segmentoRevelado) document.getElementById('f-segmento-revelado').value=s.segmentoRevelado;
+  if(s.historia){const h=s.historia;['ser','mundo','tension','intento','artefacto','transformacion'].forEach(k=>{if(h[k])document.getElementById('h-'+k).value=h[k];});}
+  if(s.propuesta) document.getElementById('f-propuesta').value=s.propuesta;
+  if(s.exageracion) document.getElementById('f-exageracion').value=s.exageracion;
+  if(s.wow) document.getElementById('f-wow').value=s.wow;
+  if(s.cards) assignedCards=s.cards;
+  updateProgress();
+}
+
+function goPhase(n){
+  for(let i=0;i<8;i++){
+    const el=document.getElementById('phase-'+i);
+    if(el) el.style.display=i===n?'block':'none';
+    const btn=document.getElementById('pnav-'+i);
+    if(btn){btn.classList.remove('active');if(i===n)btn.classList.add('active');}
+  }
+  if(n===1) renderResumenFase0();
+  if(n===2) renderCardsAndHistory();
+  if(n===3) renderCardsAndHistory();
+  if(n===4) buildChat2InputFase4();
+  if(n===5){buildWowInput();renderWowCards();}
+  if(n===6) renderEmpRepo();
+  if(n===7) renderPasaporteScreen();
+}
+
+function renderResumenFase0(){
+  const s=getSaved();
+  const preguntas=[
+    {q:'Producto o servicio',v:s.producto},
+    {q:'Segmento lógico actual',v:s.segmentoLogico},
+    {q:'¿Qué hace esta persona en su día a día?',v:s.diaADia},
+    {q:'¿Qué emoción vive frecuentemente?',v:s.emocion},
+    {q:'¿Qué ha intentado antes y no le ha funcionado?',v:s.intentos},
+    {q:'¿Qué cambio desea lograr?',v:s.cambio},
+  ];
+  const div=document.getElementById('resumen-fase0');
+  if(!div) return;
+  div.innerHTML=preguntas.map(p=>`
+    <div style="border:1px solid #E0D8C8;border-radius:8px;padding:10px 12px;margin-bottom:8px;background:white">
+      <div style="font-size:11px;font-weight:500;color:#7B5EA7;margin-bottom:4px">${p.q}</div>
+      <div style="font-size:13px;color:#1A1A2E;line-height:1.6;white-space:pre-wrap">${p.v||'<span style="color:#BBB;font-style:italic">No respondido</span>'}</div>
+    </div>
+  `).join('');
+}
+
+function copyResumenFase0(){
+  const s=getSaved();
+  const txt=`Producto o servicio:\n${s.producto||''}\n\nSegmento lógico actual:\n${s.segmentoLogico||''}\n\n¿Qué hace esta persona en su día a día?\n${s.diaADia||''}\n\n¿Qué emoción vive frecuentemente en relación con el problema que resuelvo?\n${s.emocion||''}\n\n¿Qué ha intentado antes y no le ha funcionado?\n${s.intentos||''}\n\n¿Qué cambio desea lograr si mi producto realmente funciona?\n${s.cambio||''}`;
+  navigator.clipboard.writeText(txt).then(()=>{
+    const btn=document.getElementById('btn-copy-resumen');
+    if(btn){btn.textContent='¡Copiado! Ahora pégalo en el chat →';setTimeout(()=>btn.textContent='Copiar mis respuestas para el chat',3000);}
+  });
+}
+
+function savePhase0(){
+  const nombre=document.getElementById('f-nombre').value.trim();
+  const producto=document.getElementById('f-producto').value.trim();
+  const segmentoLogico=document.getElementById('f-segmento-logico').value.trim();
+  const diaADia=document.getElementById('f-dia-a-dia').value.trim();
+  const emocion=document.getElementById('f-emocion').value.trim();
+  const intentos=document.getElementById('f-intentos').value.trim();
+  const cambio=document.getElementById('f-cambio').value.trim();
+  if(!nombre||!producto){alert('Por favor completa al menos el nombre del proyecto y la descripción del producto.');return;}
+  save({nombre,producto,segmentoLogico,diaADia,emocion,intentos,cambio,phase:Math.max(getSaved().phase||0,1)});
+  markDone(0);goPhase(1);
+}
+
+function savePhase1(){
+  const segmentoRevelado=document.getElementById('f-segmento-revelado').value.trim();
+  if(!segmentoRevelado){alert('Por favor pega el resultado del Chat 1.');return;}
+  save({segmentoRevelado,phase:Math.max(getSaved().phase||0,2)});
+  if(!assignedCards.length) assignRandomCards();
+  markDone(1);goPhase(2);
+}
+
+function assignRandomCards(){
+  const shuffled=[...Array(67).keys()].map(i=>i+1).sort(()=>Math.random()-0.5);
+  assignedCards=shuffled.slice(0,3);
+  save({cards:assignedCards});
+}
+
+function renderCardsAndHistory(){
+  if(!assignedCards.length) assignRandomCards();
+  renderCardThumbs('history');
+  buildChat2Input();
+  ['ser','mundo','tension','intento','artefacto','transformacion'].forEach(k=>{
+    const el=document.getElementById('h-'+k);
+    if(el) el.addEventListener('input',buildChat2Input);
+  });
+}
+
+function renderCardThumbs(type){
+  const cards = type==='history' ? assignedCards : wowCards;
+  const labels = type==='history'
+    ? ['inspira el personaje y su mundo','inspira la tensión y el conflicto','inspira la transformación y el artefacto']
+    : ['detonador para atributo 1','detonador para atributo 2','detonador para atributo 3'];
+  const icons = type==='history' ? ['🌑','⚡','✨'] : ['💥','🚀','🌌'];
+  const refs = type==='history' ? ['carta1-ref','carta2-ref','carta3-ref'] : [];
+
+  if(type==='history'){
+    refs.forEach((id,i)=>{
+      const el=document.getElementById(id);
+      if(el) el.textContent='Carta '+cards[i]+' — '+labels[i];
+    });
+    [0,1,2].forEach(i=>{
+      const num=cards[i];
+      const frontEl=document.getElementById('card-thumb-front-'+i);
+      const numEl=document.getElementById('card-num-'+i);
+      if(frontEl) frontEl.innerHTML=`<img src="https://drive.google.com/thumbnail?id=${FRONT_IDS[num]}&sz=w200" style="width:100%;height:100%;object-fit:cover;display:block" onerror="this.parentNode.style.background='#C9A84C'" />`;
+      if(numEl) numEl.textContent=num;
+      const inner=document.getElementById('card-thumb-inner-'+i);
+      if(inner) inner.style.transform='';
+    });
+  } else {
+    const grid=document.getElementById('wow-cards-grid');
+    if(!grid) return;
+    grid.innerHTML='';
+    cards.forEach((num,i)=>{
+      const div=document.createElement('div');
+      div.style.cssText='flex-shrink:0;width:90px;height:126px;border-radius:8px;overflow:hidden;border:2px solid #E0D8C8;cursor:pointer;position:relative;background:#EEE';
+      div.innerHTML=`
+        <div id="wow-inner-${i}" style="width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform 0.5s">
+          <div style="position:absolute;width:100%;height:100%;backface-visibility:hidden">
+            <img src="https://drive.google.com/thumbnail?id=${FRONT_IDS[num]}&sz=w200" style="width:100%;height:100%;object-fit:cover;display:block" onerror="this.parentNode.style.background='#C9A84C'" />
+          </div>
+          <div style="position:absolute;width:100%;height:100%;backface-visibility:hidden;transform:rotateY(180deg);background:#1A1A2E;display:flex;align-items:center;justify-content:center;color:white;font-size:20px;flex-direction:column;gap:4px">
+            <div>${icons[i]}</div>
+            <div style="font-size:9px;opacity:0.7">${labels[i]}</div>
+          </div>
+        </div>
+        <div style="position:absolute;bottom:3px;right:5px;font-size:10px;font-weight:600;color:white;text-shadow:0 1px 3px rgba(0,0,0,0.8)">${num}</div>`;
+      div.onclick=()=>{
+        const inner=document.getElementById('wow-inner-'+i);
+        inner.style.transform=inner.style.transform==='rotateY(180deg)' ? '' : 'rotateY(180deg)';
+      };
+      grid.appendChild(div);
+    });
+  }
+}
+
+let wowCards=[];
+
+function renderWowCards(){
+  if(!wowCards.length) wowCards=pickRandomCards(3, assignedCards);
+  renderCardThumbs('wow');
+}
+
+function reshuffleWowCards(){
+  wowCards=pickRandomCards(3, assignedCards);
+  renderCardThumbs('wow');
+}
+
+function reshuffleHistoryCards(){
+  assignedCards=pickRandomCards(3,[]);
+  save({cards:assignedCards});
+  renderCardThumbs('history');
+}
+
+function pickRandomCards(n, exclude){
+  const pool=[...Array(67).keys()].map(i=>i+1).filter(x=>!exclude.includes(x)).sort(()=>Math.random()-0.5);
+  return pool.slice(0,n);
+}
+
+function flipThumb(i){
+  const inner=document.getElementById('card-thumb-inner-'+i);
+  if(!inner) return;
+  inner.style.transform=inner.style.transform==='rotateY(180deg)' ? '' : 'rotateY(180deg)';
+}
+
+function buildChat2InputFase4(){
+  const s=getSaved();
+  const h=s.historia||{};
+  const txt=`INPUT 1 — SEGMENTO REVELADO\n${s.segmentoRevelado||'[pegar segmento revelado]'}\n\nINPUT 2 — DEFINICIÓN DEL PRODUCTO\n${s.producto||'[pegar definición del producto]'}\n\nINPUT 2B — PERFIL EMOCIONAL DEL CLIENTE\nDía a día: ${s.diaADia||''}\nEmoción frecuente: ${s.emocion||''}\nIntentos fallidos: ${s.intentos||''}\nCambio deseado: ${s.cambio||''}\n\nINPUT 3 — HISTORIA FANTASIOSA\n${h.ser||''} ${h.mundo||''}\n\nUn día apareció: ${h.tension||''}\nLo intentó resolver con: ${h.intento||''}\n\nHasta que encontró: ${h.artefacto||''}\nCon él, el mundo cambió porque: ${h.transformacion||''}`;
+  const el=document.getElementById('input-chat2-fase4');
+  if(el) el.textContent=txt;
+}
+
+function buildChat2Input(){
+  const s=getSaved();
+  const get=id=>document.getElementById(id)?document.getElementById(id).value||'[pendiente]':'[pendiente]';
+  const txt=`INPUT 1 — SEGMENTO REVELADO\n${s.segmentoRevelado||'[pegar segmento revelado]'}\n\nINPUT 2 — DEFINICIÓN DEL PRODUCTO\n${s.producto||'[pegar definición del producto]'}\n\nINPUT 2B — PERFIL EMOCIONAL DEL CLIENTE\nDía a día: ${s.diaADia||'[pendiente]'}\nEmoción frecuente: ${s.emocion||'[pendiente]'}\nIntentos fallidos: ${s.intentos||'[pendiente]'}\nCambio deseado: ${s.cambio||'[pendiente]'}\n\nINPUT 3 — HISTORIA FANTASIOSA\n${get('h-ser')} ${get('h-mundo')}\n\nUn día apareció: ${get('h-tension')}\nLo intentó resolver con: ${get('h-intento')}\n\nHasta que encontró: ${get('h-artefacto')}\nCon él, el mundo cambió porque: ${get('h-transformacion')}`;
+  const el=document.getElementById('input-chat2');
+  if(el) el.textContent=txt;
+}
+
+function savePhase3(){
+  const historia={};
+  ['ser','mundo','tension','intento','artefacto','transformacion'].forEach(k=>{
+    const el=document.getElementById('h-'+k);
+    if(el) historia[k]=el.value;
+  });
+  save({historia,phase:Math.max(getSaved().phase||0,4)});
+  markDone(2);markDone(3);goPhase(4);
+}
+
+// savePhase2 ahora llama a savePhase3 internamente
+function savePhase2(){ savePhase3(); }
+
+function savePhase4(){
+  const propuesta=document.getElementById('f-propuesta').value.trim();
+  if(!propuesta){alert('Por favor pega el resultado del Chat 2.');return;}
+  save({propuesta,phase:Math.max(getSaved().phase||0,5)});
+  markDone(4);goPhase(5);
+}
+
+function buildWowInput(){
+  const s=getSaved();
+  const exag=document.getElementById('f-exageracion')?document.getElementById('f-exageracion').value||'[escribe tu propuesta de valor exagerada]':'';
+  const txt=`INPUT 4 — PROPUESTA DE VALOR EXAGERADA\n${exag}\n\n---\nCONTEXTO:\nPropuesta de valor: ${s.propuesta||'[ver fase anterior]'}\nSegmento revelado: ${s.segmentoRevelado||'[ver fase anterior]'}`;
+  const el=document.getElementById('input-wow');
+  if(el) el.textContent=txt;
+}
+
+function savePhase5(){
+  const exageracion=document.getElementById('f-exageracion').value.trim();
+  const wow=document.getElementById('f-wow').value.trim();
+  if(!wow){alert('Por favor pega el Factor WOW generado por el chat.');return;}
+  save({exageracion,wow,phase:6,completed:true});
+  markDone(5);
+  alert('🎉 ¡Repositorio completo! Tu proyecto está listo para el Demoday.');
+}
+
+function markDone(n){
+  const btn=document.getElementById('pnav-'+n);
+  if(btn){btn.classList.remove('active');btn.classList.add('done');}
+  updateProgress();
+}
+
+function updateProgress(){
+  const phase=getSaved().phase||0;
+  document.getElementById('progress-fill').style.width=Math.min(100,Math.round((phase/6)*100))+'%';
+}
+
+function copyInput(id){
+  const txt=document.getElementById(id).textContent;
+  navigator.clipboard.writeText(txt).then(()=>{
+    const btn=event.target;btn.textContent='¡Copiado!';
+    setTimeout(()=>btn.textContent='Copiar input',2000);
+  });
+}
+
+async function loadAdmin(role){
+  showScreen('screen-admin');
+  document.getElementById('admin-role-label').textContent=currentUser.name;
+  document.getElementById('admin-sub').textContent=role==='direccion'?'Vista de lectura — repositorio de todos los proyectos':'Monitoreo en tiempo real de los 7 proyectos';
+  const grid=document.getElementById('admin-grid');
+  grid.innerHTML='<div style="text-align:center;padding:2rem;color:#888;font-size:14px">Cargando proyectos desde GitHub...</div>';
+  // Cargar todos los proyectos desde GitHub
+  const ghData=await loadAllProjects();
+  // Mergear con caché local
+  Object.keys(ghData).forEach(code=>{_localCache[code]=ghData[code];});
+  grid.innerHTML='';
+  const codes=Object.keys(CODES).filter(c=>CODES[c].role==='emprendedor');
+  codes.forEach(code=>{
+    const data=_localCache[code]||ghData[code]||{};
+    const phase=data.phase||0;
+    const pct=Math.round((phase/6)*100);
+    const nombre=data.nombre||CODES[code]?.name||code;
+    const div=document.createElement('div');
+    div.className='project-row';
+    div.innerHTML=`<div><h4>${nombre}</h4><div class="meta">${code} · Fase ${phase}/6 · ${pct}% completado</div><div style="margin-top:8px;background:#E8E0D0;border-radius:20px;height:4px;width:220px"><div style="height:100%;border-radius:20px;background:#2E9E8A;width:${pct}%"></div></div></div><button class="btn-sm btn-gold" onclick="viewRepo('${code}')">Ver repositorio →</button>`;
+    grid.appendChild(div);
+  });
+  if(codes.length===0){
+    grid.innerHTML='<div style="text-align:center;padding:2rem;color:#888;font-size:14px">No hay proyectos guardados aún.</div>';
+  }
+}
+
+function viewRepo(code){
+  let data=_localCache[code]||{};
+  try{const d=localStorage.getItem('ssp_'+code);if(d&&!data.nombre)data=JSON.parse(d);}catch(e){}
+  showScreen('screen-repo');
+  const cont=document.getElementById('repo-content');
+  const nombre=data.nombre||code;
+  cont.innerHTML=`
+    <div class="section-title">${nombre}</div>
+    <div class="section-sub">${code} — Repositorio completo del proyecto</div>
+    ${repoSection('Producto / Servicio',data.producto)}
+    ${repoSection('Segmento Lógico',data.segmentoLogico)}
+    ${repoSection('Perfil Emocional del Cliente',data.diaADia?`Día a día:\n${data.diaADia}\n\nEmoción frecuente:\n${data.emocion||''}\n\nIntentos fallidos:\n${data.intentos||''}\n\nCambio deseado:\n${data.cambio||''}`:null)}
+    ${repoSection('Segmento Revelado',data.segmentoRevelado)}
+    ${repoSection('Historia Fantasiosa',data.historia?formatHistoria(data.historia):null)}
+    ${repoSection('Propuesta de Valor',data.propuesta)}
+    ${repoSection('Exageración Creativa',data.exageracion)}
+    ${repoSection('Factor WOW',data.wow)}
+  `;
+}
+
+function renderPasaporteScreen(){
+  const s=getSaved();
+  const textarea=document.getElementById('f-pasaporte-final');
+  if(textarea && s.pasaporteGPT) textarea.value=s.pasaporteGPT;
+  renderPasaportePreview();
+}
+
+function renderPasaportePreview(){
+  const s=getSaved();
+  const preview=document.getElementById('pasaporte-preview');
+  if(!preview) return;
+  if(!s.pasaporteGPT){preview.innerHTML='';return;}
+  preview.innerHTML=`<div class="card" style="border-color:var(--gold);border-width:2px;margin-top:1rem">
+    <h3 style="color:var(--gold);font-family:'Playfair Display',serif;margin-bottom:6px">Vista previa</h3>
+    <pre style="font-size:13px;white-space:pre-wrap;line-height:1.8;color:#1A1A2E;font-family:'DM Sans',sans-serif">${s.pasaporteGPT.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</pre>
+  </div>`;
+}
+
+function guardarPasaporte(){
+  const txt=document.getElementById('f-pasaporte-final').value.trim();
+  if(!txt){alert('Por favor pega el contenido del Pasaporte primero.');return;}
+  save({pasaporteGPT:txt});
+  renderPasaportePreview();
+  const status=document.getElementById('pasaporte-status');
+  status.style.display='block';
+  status.textContent='✅ Guardado correctamente.';
+  setTimeout(()=>{status.style.display='none';},3000);
+}
+
+async function descargarPasaporteWord(){
+  const txt=document.getElementById('f-pasaporte-final').value.trim();
+  if(!txt){alert('Por favor pega el contenido del Pasaporte primero.');return;}
+  const status=document.getElementById('pasaporte-status');
+  status.style.display='block';
+  status.textContent='Construyendo el documento Word...';
+  try{
+    await construirDocx(txt);
+    status.textContent='✅ ¡Documento descargado!';
+    setTimeout(()=>{status.style.display='none';},3000);
+  }catch(err){
+    status.textContent='Error al generar. Intenta de nuevo.';
+    console.error(err);
+  }
+}
+
+function renderEmpRepo(){
+  const s=getSaved();
+  const cont=document.getElementById('emp-repo-content');
+  if(!cont) return;
+  // Cargar pasaporte guardado si existe
+  const textarea=document.getElementById('f-pasaporte-final');
+  if(textarea && s.pasaporteGPT) textarea.value=s.pasaporteGPT;
+
+  const repoTxt=`NOMBRE DEL PROYECTO\n${s.nombre||''}\n\nPRODUCTO / SERVICIO\n${s.producto||''}\n\nSEGMENTO LÓGICO\n${s.segmentoLogico||''}\n\nPERFIL EMOCIONAL DEL CLIENTE\nDía a día: ${s.diaADia||''}\nEmoción frecuente: ${s.emocion||''}\nIntentos fallidos: ${s.intentos||''}\nCambio deseado: ${s.cambio||''}\n\nSEGMENTO REVELADO\n${s.segmentoRevelado||''}\n\nHISTORIA FANTASIOSA\n${s.historia?formatHistoria(s.historia):''}\n\nPROPUESTA DE VALOR\n${s.propuesta||''}\n\nEXAGERACIÓN CREATIVA\n${s.exageracion||''}\n\nFACTOR WOW\n${s.wow||''}`;
+
+  cont.innerHTML=`
+    <div class="card" style="background:#1A1A2E;border-color:#1A1A2E;margin-bottom:1.25rem">
+      <h3 style="color:#C9A84C;margin-bottom:6px">Tu Pasaporte de Innovación</h3>
+      <p style="font-size:13px;color:#AAA;margin-bottom:14px">Genera tu documento Word con un clic. Se descargará automáticamente a tu dispositivo.</p>
+      <button id="btn-generar-pasaporte" onclick="generarPasaporte()" style="background:var(--gold);color:white;border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;padding:12px 20px;cursor:pointer;width:100%">📄 Descargar mi repositorio como Word (.docx)</button>
+      <div id="pasaporte-status" style="margin-top:10px;font-size:12px;color:#AAA;text-align:center;display:none"></div>
+    </div>
+    ${repoSection('Nombre del proyecto', s.nombre)}
+    ${repoSection('Producto / Servicio', s.producto)}
+    ${repoSection('Segmento Lógico', s.segmentoLogico)}
+    ${repoSection('Perfil Emocional del Cliente', s.diaADia ? `Día a día:\n${s.diaADia}\n\nEmoción frecuente:\n${s.emocion||''}\n\nIntentos fallidos:\n${s.intentos||''}\n\nCambio deseado:\n${s.cambio||''}` : null)}
+    ${repoSection('Segmento Revelado', s.segmentoRevelado)}
+    ${repoSection('Historia Fantasiosa', s.historia ? formatHistoria(s.historia) : null)}
+    ${repoSection('Propuesta de Valor', s.propuesta)}
+    ${repoSection('Exageración Creativa', s.exageracion)}
+    ${repoSection('Factor WOW', s.wow)}
+    ${s.pasaporteGPT ? `<div class="card" style="border-color:var(--gold);border-width:2px;margin-top:1rem">
+      <h3 style="color:var(--gold);font-family:'Playfair Display',serif;margin-bottom:6px">🪪 Pasaporte de Innovación</h3>
+      <div style="font-size:12px;color:#888;margin-bottom:12px">Generado por Chat GPT — documento final</div>
+      <pre style="font-size:13px;white-space:pre-wrap;line-height:1.8;color:#1A1A2E;font-family:'DM Sans',sans-serif">${s.pasaporteGPT.replace(/`/g,"'")}</pre>
+    </div>` : ''}
+  `;
+  window._repoTxt=repoTxt;
+}
+
+async function generarPasaporte(){
+  const btn=document.getElementById('btn-generar-pasaporte');
+  const status=document.getElementById('pasaporte-status');
+  const repoTxt=window._repoTxt||'';
+  if(!repoTxt.trim()){alert('Tu repositorio está vacío. Completa al menos las primeras fases.');return;}
+  btn.disabled=true;
+  btn.textContent='⏳ Generando documento...';
+  status.style.display='block';
+  status.textContent='Construyendo tu documento Word...';
+  try{
+    await construirDocx(repoTxt);
+    btn.disabled=false;
+    btn.textContent='📄 Descargar mi repositorio como Word (.docx)';
+    status.textContent='✅ ¡Documento descargado!';
+    setTimeout(()=>{status.style.display='none';},3000);
+  }catch(err){
+    btn.disabled=false;
+    btn.textContent='📄 Descargar mi repositorio como Word (.docx)';
+    status.textContent='Error al generar. Intenta de nuevo.';
+    console.error(err);
+  }
+}
+
+async function construirDocx(textoGPT){
+  const s=getSaved();
+  const nombre=s.nombre||'Mi Proyecto';
+  const {Document,Packer,Paragraph,TextRun,AlignmentType,BorderStyle,PageBreak}=window.docx;
+  const GOLD='C9A84C'; const DARK='1A1A2E';
+  const children=[];
+
+  // PORTADA
+  children.push(new Paragraph({alignment:AlignmentType.CENTER,spacing:{before:2880,after:240},children:[new TextRun({text:'SSP',bold:true,size:80,color:GOLD,font:'Georgia'})]}));
+  children.push(new Paragraph({alignment:AlignmentType.CENTER,spacing:{before:0,after:160},children:[new TextRun({text:nombre.toUpperCase(),bold:true,size:52,color:DARK,font:'Georgia'})]}));
+  children.push(new Paragraph({alignment:AlignmentType.CENTER,spacing:{before:0,after:480},children:[new TextRun({text:'PASAPORTE DE INNOVACIÓN',size:28,color:'888888',font:'Arial'})]}));
+  children.push(new Paragraph({border:{bottom:{style:BorderStyle.SINGLE,size:6,color:GOLD}},spacing:{before:0,after:480},children:[new TextRun({text:'',size:4})]}));
+  children.push(new Paragraph({alignment:AlignmentType.CENTER,spacing:{before:0,after:120},children:[new TextRun({text:'Centro de Investigación en Innovación',size:20,color:'888888',font:'Arial',italics:true})]}));
+  children.push(new Paragraph({alignment:AlignmentType.CENTER,spacing:{before:0,after:0},children:[new TextRun({text:new Date().toLocaleDateString('es-MX',{year:'numeric',month:'long',day:'numeric'}),size:20,color:'AAAAAA',font:'Arial'})]}));
+  children.push(new Paragraph({children:[new PageBreak()]}));
+
+  // CONTENIDO — línea por línea del output GPT
+  const lineas=textoGPT.split('\n');
+  lineas.forEach(linea=>{
+    const esTitulo=/^\d{2}\s*[—–-]/.test(linea)||/^#{1,3}\s/.test(linea)||/^[A-ZÁÉÍÓÚÑ\s]{5,}$/.test(linea.trim())&&linea.trim().length<60;
+    if(esTitulo){
+      const textoLimpio=linea.replace(/^#{1,3}\s*/,'').trim();
+      children.push(new Paragraph({spacing:{before:400,after:80},
+        border:{bottom:{style:BorderStyle.SINGLE,size:4,color:GOLD}},
+        children:[new TextRun({text:textoLimpio,bold:true,size:28,color:DARK,font:'Georgia'})]}));
+    } else if(!linea.trim()){
+      children.push(new Paragraph({spacing:{before:0,after:80},children:[new TextRun({text:'',size:4})]}));
+    } else {
+      const esClave=linea.includes(':')&&linea.indexOf(':')<30&&!linea.startsWith('"');
+      children.push(new Paragraph({spacing:{before:0,after:80},
+        children:[new TextRun({text:linea,size:22,font:'Arial',color:DARK,bold:esClave})]}));
+    }
+  });
+
+  // CIERRE
+  children.push(new Paragraph({children:[new PageBreak()]}));
+  children.push(new Paragraph({alignment:AlignmentType.CENTER,spacing:{before:1440,after:320},children:[new TextRun({text:'Este es tu Pasaporte de Innovación.',bold:true,size:28,color:DARK,font:'Georgia'})]}));
+  children.push(new Paragraph({alignment:AlignmentType.CENTER,spacing:{before:0,after:160},children:[new TextRun({text:'Lo que acabas de leer no lo tiene ningún competidor',size:22,color:'555555',font:'Arial',italics:true})]}));
+  children.push(new Paragraph({alignment:AlignmentType.CENTER,spacing:{before:0,after:160},children:[new TextRun({text:'porque surgió de quien eres tú, no de una plantilla.',size:22,color:'555555',font:'Arial',italics:true})]}));
+  children.push(new Paragraph({alignment:AlignmentType.CENTER,spacing:{before:0,after:0},children:[new TextRun({text:'Llévalo al Demoday como lo que es: tu identidad.',size:22,color:GOLD,font:'Arial',bold:true,italics:true})]}));
+
+  const doc=new Document({sections:[{properties:{page:{size:{width:12240,height:15840},margin:{top:1440,right:1440,bottom:1440,left:1440}}},children}]});
+  const buffer=await Packer.toBuffer(doc);
+  const blob=new Blob([buffer],{type:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download=`Pasaporte_${nombre.replace(/\s+/g,'_')}.docx`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function copyFullRepo(){
+  const txt=window._repoTxt||'';
+  navigator.clipboard.writeText(txt).then(()=>{});
+}
+
+function repoSection(title,content){
+  if(!content) return `<div class="card" style="opacity:0.5"><h3>${title}</h3><div class="sub">Pendiente</div></div>`;
+  return `<div class="card"><h3>${title}</h3><pre style="font-size:13px;white-space:pre-wrap;line-height:1.7;color:#333;margin-top:8px;font-family:'DM Sans',sans-serif">${content}</pre></div>`;
+}
+
+function formatHistoria(h){
+  return `🌑 El Ser: ${h.ser||''}\n${h.mundo||''}\n\n⚡ La Tensión: ${h.tension||''}\n${h.intento||''}\n\n✨ La Transformación: ${h.artefacto||''}\n${h.transformacion||''}`;
+}
+
+function backToAdmin(){loadAdmin(currentUser.role);}
+
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function logout(){
+  currentUser=null;assignedCards=[];
+  showScreen('screen-login');
+  document.getElementById('login-code').value='';
+}
+</script>
+<script src="https://unpkg.com/docx@8.5.0/build/index.js"></script>
+</body>
+</html>
